@@ -1,0 +1,112 @@
+---
+title: "baseballstats Examples"
+author: "Trevor Valent"
+output: html_document
+date: "2025-04-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message = FALSE}
+library(baseballstats)
+library(ggplot2)
+library(dplyr)
+library(forcats)
+```
+
+##Load in Example Data Frames
+```{r, "Example Data Frames"}
+hitters <- read.csv("mlbhit.csv")
+hit <- hitters[1:15, ]
+pitchers <- read.csv("mlbpit.csv")
+pit <- pitchers[1:15, ]
+```
+
+## Batting Average
+
+This command calculates a batter's batting average. BA is a ratio of Hits to At Bats.
+This command can be used on pure data or on a data frame.
+```{r, "Batting Average"}
+avg(56, 217)
+hit$avg <- avg(hit$h, hit$ab)
+cols1 <- c(1,3,18)
+head(hit[ ,cols1])
+```
+## On Base Percentage
+
+This command calculates a batter's on base percentage. OBP is essentially a ratio of times reached base against times attempted to reach base, and measures how often a batter successfully reaches base.
+This command can be used on pure data or on a data frame.
+```{r, "On Base Percentage"}
+obp(180,133,9,2,559)
+hit$obp <- obp(hit$h, hit$bb, hit$hbp, hit$sf, hit$ab)
+cols2 <- c(1,3,19)
+head(hit[ ,cols2])
+```
+## Slugging Percentage
+
+This command calculates a batter's slugging percentage. Slugging percentage weighs the value of the bases and essentially measures a batter's efficiency. Slugging is a ratio of Total Bases accumulated to total At Bats. Total Bases can be substituted by the expression (singles + 2*doubles + 3*triples + 4*hr), which adds more weight to hits that result in more bases, as they are seen as more valuable. 
+This command can be used on pure data or on a data frame.
+```{r, "Slugging Percentage"}
+slg(392,559)
+hit$slg <- slg(hit$tb, hit$ab)
+cols3 <- c(1,3,20)
+head(hit[ ,cols3])
+```
+## On Base Plus Slugging Percentage
+
+This command calculates a batter's on base plus slugging percentage. OPS is a combination of OBP and SLG, and can also be calculated by adding the two values together. An OPS above .900 is seen as elite, and one above 1.000 is usually only held by the best players in a season/career.
+This command can be used on pure data or on a data frame.
+```{r, "On Base Plus Slugging"}
+ops(180,133,9,2,392,559)
+hit$ops <- ops(hit$h, hit$bb, hit$hbp, hit$sf, hit$tb, hit$ab)
+cols4 <- c(1,3,21)
+head(hit[ ,cols4])
+```
+## fixip
+
+This command changes the Innings Pitched (IP) value(s) given. In baseball, innings are measured in thirds, as there are three outs per inning. If a pitcher finishes an inning, they have pitched 1 inning. If they have only gotten one batter out, they have pitched one third of an inning, and if they have only gotten two batters out, they have pitched two thirds of an inning. However, in the numeric recording of innings pitched, it is customary to represent these thirds as 0.1 and 0.2 instead of 1/3 or 2/3. For calculations, however, these are considered equivalent to 1/3 and 2/3, so this command fixes that inconsistency and converts values that end in 0.1 to 1/3 and 0.2 to 2/3 respectively.
+```{r, "fixip"}
+fixip(177.2)
+fixip(pit$ip)
+```
+
+
+## Earned Run Average
+
+This command calculates a pitcher's Earned Run Average. ERA is a ratio of earned runs surrendered by a pitcher (which are essentially runs allowed at the fault of the pitcher) to the total innings pitched by a pitcher. A lower ERA is more ideal.
+This command can be used on pure data or on a data frame.
+```{r, "Earned Run Average"}
+era(47, 177.2)
+pit$era <- era(pit$er, pit$ip)
+cols5 <- c(1,3,14)
+head(pit[ ,cols5])
+```
+## Walks Plus Hits per Innings Pitched
+
+This command calculates a pitcher's Walks plus Hits per Innings Pitched. WHIP is a ratio of walks and hits surrendered by a pitcher to the total innings pitched by a pitcher. This seeks to measure the tendency for a pitcher to allow hitters to reach base. A lower WHIP is more ideal. A WHIP of 1 signifies that a pitcher allows one baserunner per inning, so a WHIP below 1 is seen as ideal and/or impressive.
+This command can be used on pure data or on a data frame.
+```{r, "Walks plus Hits per Innings Pitched"}
+whip(35, 142, 192)
+pit$whip <- whip(pit$bba, pit$ha, pit$ip)
+cols6 <- c(1,3,15)
+head(pit[ ,cols6])
+```
+## Fantasy Points
+
+This command calculates a player's total fantasy points scored. This score is based on the default scoring system used in an ESPN Fantasy Baseball league. While not exactly important or vital, it may be fun to look at. A larger score is considered good. For this command, it is ideal to directly define the variables when using the command, as there are a lot of different components.
+```{r, "Fantasy Points"}
+fpts(ip = 177.1, ha = 154, er = 65, bba = 52, so = 154, w = 9, l = 9)
+pit$fpts <- fpts(ip = pit$ip, ha = pit$ha, er = pit$er, bba = pit$bba, so = pit$so, w = pit$w, l = pit$l, sv = pit$sv)
+cols7 <- c(1,3,16)
+head(pit[ ,cols7])
+```
+## Making Graphs using statChart
+
+statChart is a command that creates a bar graph to visualize a desired number of players based on the user's desired statistic from this package. The options are avg, slg, obp, ops, era, whip, and fpts. Users choose the statistic they want, pick the right data frame (either composed of batters or pitchers), select the number of players they want to see, and the command works from there. The selected data set must have columns that match that of the command's inputs in order to work. 
+```{r, "statChart"}
+statChart(hitters, "avg", n = 15)
+statChart(pitchers, "whip", n = 5)
+statChart(hitters, "fpts", n = 10)
+```
