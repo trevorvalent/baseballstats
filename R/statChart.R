@@ -15,6 +15,9 @@ library(forcats)
 #' @examples statChart(pitchers, "era", n = 15)
 
 statChart <- function(df, command, n){
+  require(ggplot2)
+  require(dplyr)
+  require(forcats)
   if (command == "avg"){
     df$avg <- avg(df$h, df$ab)
     df1 <- slice_max (df, order_by = avg, n = n)
