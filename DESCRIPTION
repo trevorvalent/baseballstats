@@ -1,0 +1,18 @@
+Package: baseballstats
+Type: Package
+Title: Calcualting Baseball Statistics
+Version: 1.0.1
+Authors@R: c(
+    person(
+      "Trevor", "Valent",
+      email = "rhinosaur17@gmail.com",
+      role = c("aut", "cre")
+    )
+  )
+Description: Contains a number of rate statistics commonly used in analysis of baseball players and teams.
+    The most elementary baseball statstics are included in this package. Formulas for the statistics are taken from Wikipedia and baseball-reference.
+License: `use_mit_license()`
+Imports: dplyr, ggplot2, forcats
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2.9000
